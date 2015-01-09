@@ -125,3 +125,16 @@ sudo ./efig backup
 # stop and remove project containers
 sudo /efig.sh rm
 ```
+
+--------------------------
+
+## Docker images
+
+```efig``` completely tested with ```dvapelnik/docker-lap``` docker containers 
+
+* dvapelnik/docker-lap:debian.squeeze.php53
+* dvapelnik/docker-lap:debian.wheezy.php54
+* dvapelnik/docker-lap:ubuntu.trusty.php55
+* dvapelnik/docker-lap:debian.jessie.php56
+
+They can be pulled from [DockerHub](https://registry.hub.docker.com/u/dvapelnik/docker-lap/) or builded with Dockerfiles from [dvapelnik/docker-lap](https://github.com/dvapelnik/docker-lap)
