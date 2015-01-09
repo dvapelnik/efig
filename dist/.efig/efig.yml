@@ -1,0 +1,19 @@
+db:
+    image: sameersbn/mysql:latest
+    environment:
+        - DB_USER=dbuser
+        - DB_PASS=dbpass
+        - DB_NAME=dbname
+        - E_DB_DUMP=db.sql
+        - E_DB_NAME=dbname
+        - E_DB_TEST_DUMP=db.test.sql
+        - E_DB_TEST_NAME=dbtest
+    volumes:
+        - db/:/db/
+web:
+    image: dvapelnik/docker-lap:debian.jessie.php56
+    volumes:
+        - ../:/var/www/
+        - httpd.conf:/etc/apache2/sites-enabled/000-default
+    links:
+        - db:db
