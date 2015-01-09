@@ -5,14 +5,30 @@
 
 ---------------------
 
+## Requirements
+
+* *Docker* (https://www.docker.com/)
+* *fig* (http://www.fig.sh)
+* *DNSMasq* (http://www.thekelleys.org.uk/dnsmasq/doc.html)
+* *nsenter* (https://github.com/jpetazzo/nsenter)
+
+### DNSMasq minimal configuration
+
+```bash
+# cat /etc/dnsmasq.conf | grep -E -v '^(#.*)?$'
+listen-address=127.0.0.1
+```
+
+---------------------
+
 ## Example
 
 You have a project in ```~/web/project```. Make or copy files into ```~/web/project/.efig```:
 ```
 .efig/
 ├── db
-│   ├── start.db.sh
-│   └── stop.db.sh
+│   ├── start.db.sh
+│   └── stop.db.sh
 ├── efig.conf
 ├── efig.sh
 ├── efig.yml
