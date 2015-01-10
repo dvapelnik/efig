@@ -24,7 +24,7 @@ listen-address=127.0.0.1
 
 ## Example
 
-You have a project in `~/web/project`. Make or copy files into `~/web/project/.efig`:
+Imagine you have a project in `~/web/project`. Make or copy files into `~/web/project/.efig`:
 ```
 .efig/
 ├── db
