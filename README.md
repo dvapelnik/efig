@@ -1,8 +1,8 @@
 # efig
 
-```efig``` is a tiny wrapper for ```fig``` [(homepage)](http://www.fig.sh). Main ```efig```'s function is create environment for web developer with *php* and *mysql* with one click way for start your dockerized project.
+`efig` is a tiny wrapper for `fig` [(homepage)](http://www.fig.sh). Main `efig`'s function is create environment for web developer with *php* and *mysql* with one click way for start your dockerized project.
 
-```efig``` can startup containers with ```fig.yml``` config, deploy data from file into database, backup data from database into file, remove and restart containers.
+`efig` can startup containers with `fig.yml` config, deploy data from file into database, backup data from database into file, remove and restart containers.
 
 ---------------------
 
@@ -24,7 +24,7 @@ listen-address=127.0.0.1
 
 ## Example
 
-You have a project in ```~/web/project```. Make or copy files into ```~/web/project/.efig```:
+You have a project in `~/web/project`. Make or copy files into `~/web/project/.efig`:
 ```
 .efig/
 ├── db
@@ -40,13 +40,13 @@ You have a project in ```~/web/project```. Make or copy files into ```~/web/proj
 ```
 File or folder | Comment
 ----------------|----------------
-* ```db/``` | directory for database deploy and backup scripts and dump-files storage
-* ```efig.conf``` | configuration file
-* ```efig.sh``` | exacutable file
-* ```efig.yml``` | *fig* configuration file for configurate containers
-* ```httpd.conf``` | *apache2* config for project
-* ```logs/``` - directory for apache2 log-files
-* ```xd_profile/``` and ```xd_trace/``` - directories for XDebug profile and trace files
+`db/` | directory for database deploy and backup scripts and dump-files storage
+`efig.conf` | configuration file
+`efig.sh` | exacutable file
+`efig.yml` | `fig` configuration file for configurate containers
+`httpd.conf` | `apache2` config for project
+`logs/` | directory for `apache2` log-files
+`xd_profile/` `xd_trace/` | directories for XDebug profile and trace files
 
 ### Config samples
 ```yml
@@ -73,10 +73,10 @@ web:
 ```
 Variable | Comment
 ------------|-------------
-```E_DB_DUMP``` | db-dump filename in ```db/``` directory for *production* database
-```E_DB_NAME``` | name of *production* database
-```E_DB_TEST_DUMP``` | db-dump filename in ```db/``` directory for *test* database (if not need - you can comment this lines)
-```E_DB_TEST_NAME``` | name of *test* database
+`E_DB_DUMP` | db-dump filename in `db/` directory for *production* database
+`E_DB_NAME` | name of *production* database
+`E_DB_TEST_DUMP` | db-dump filename in `db/` directory for *test* database (if not need - you can comment this lines)
+`E_DB_TEST_NAME` | name of *test* database
 
 
 ```bash
@@ -145,7 +145,7 @@ sudo /efig.sh rm
 
 ## Docker images
 
-```efig``` completely tested with ```dvapelnik/docker-lap``` docker containers 
+`efig` completely tested with `dvapelnik/docker-lap` docker containers 
 
 * dvapelnik/docker-lap:debian.squeeze.php53
 * dvapelnik/docker-lap:debian.wheezy.php54
@@ -153,3 +153,4 @@ sudo /efig.sh rm
 * dvapelnik/docker-lap:debian.jessie.php56
 
 They can be pulled from [DockerHub](https://registry.hub.docker.com/u/dvapelnik/docker-lap/) or builded with Dockerfiles from [dvapelnik/docker-lap](https://github.com/dvapelnik/docker-lap)
+
