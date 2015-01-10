@@ -39,6 +39,28 @@ source efig.conf
 ACTION=${1:-up}
 
 # functions BEGIN
+function fnCheckConfig(){
+    if [[ -z $PROJECT_NAME ]]; then
+        echo "PROJECT_NAME in config expected"
+        exit 1
+    fi
+
+    if [[ -z $FIG_CONF ]]; then
+        echo "FIG_CONF in config expected"
+        exit 1
+    fi
+
+    if [[ -z $SUBDOMAINS_ENABLED ]]; then
+        echo "SUBDOMAINS_ENABLED in config expected"
+        exit 1
+    fi
+
+    if [[ ! ($SUBDOMAINS_ENABLED -eq 0 || $SUBDOMAINS_ENABLED -eq 1) ]]; then
+        echo "SUBDOMAINS_ENABLED value is incorrect. Use 0 or 1"
+        exit 1
+    fi
+}
+
 function fnCleanUp(){
     rm -f logs/*
     rm -f xd_profile/*
@@ -61,7 +83,15 @@ function fnBackupDB(){
 function fnUp(){
     fig -f $FIG_CONF -p $PROJECT_NAME up -d
     IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_web_1")
+    echo "Adding main container into DNSMasq config"
     echo "address=/$PROJECT_NAME.doc/$IP" >> /etc/dnsmasq.conf
+    if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
+        for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
+            IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
+            echo "Adding ${CONTAINER} container into DNSMasq config"
+            echo "address=/$CONTAINER.$PROJECT_NAME.doc/$IP" >> /etc/dnsmasq.conf
+        done
+    fi
     fnDeployDB
     fnRestartDnsmasq
 }
@@ -69,6 +99,7 @@ function fnUp(){
 function fnStop(){
     fnBackupDB
     fig -f $FIG_CONF -p $PROJECT_NAME stop
+    echo "Cleaning up DNSMasq.conf"
     sed "/$PROJECT_NAME\.doc\//d" -i /etc/dnsmasq.conf
     fnRestartDnsmasq
 }
@@ -95,6 +126,8 @@ function fnGetHelp(){
     echo -e "\thelp\t- show this help"
 }
 # functions END
+
+fnCheckConfig
 
 case $ACTION in
     'up')
