@@ -9,3 +9,4 @@ if [[ ! -z $E_DB_TEST_DUMP && ! -z $E_DB_TEST_NAME && -f /db/$E_DB_TEST_DUMP ]];
     echo "Deploing test DB"
     mysql -uroot $E_DB_TEST_NAME < /db/$E_DB_TEST_DUMP;
 fi
+

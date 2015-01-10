@@ -97,6 +97,7 @@ Config key | Comment
 `DNS_ZONE` | DNS zone for domain location. See in `SUBDOMAINS_ENABLED`
 `MAIN_CONTAINER_NAME` | Name of main (web) container. Must mutch with container name in `FIG_CONF`
 `DB_CONTAINER_NAME` | Name of database container. Must mutch with container name in `FIG_CONF`
+`DNSMASQ_CONFIG_PATH` | Path to DNSMasq config file
 
 ```apacheconf
 # httpd.conf
