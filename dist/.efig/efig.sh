@@ -132,10 +132,14 @@ function fnRm(){
 }
 
 function fnGetIPs(){
-    if [[ ! -z $DB_CONTAINER_NAME ]]; then
-        echo "DB container IP:  "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${DB_CONTAINER_NAME}_1"`
-    fi
-    echo "Web container IP: "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1"`
+    for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
+        IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
+        echo "${CONTAINER} IP is: ${IP}"
+    done
+    # if [[ ! -z $DB_CONTAINER_NAME ]]; then
+    #     echo "DB container IP:  "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${DB_CONTAINER_NAME}_1"`
+    # fi
+    # echo "Web container IP: "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1"`
 }
 
 function fnGetHelp(){
