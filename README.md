@@ -1,5 +1,6 @@
 # efig
-```efig``` is a tiny wrapper for ```fig``` [(homepage)](http://www.fig.sh). Main ```efig```'s function is create environment for web developer with *php* and *mysql*. One click way for start your dockerized project.
+
+```efig``` is a tiny wrapper for ```fig``` [(homepage)](http://www.fig.sh). Main ```efig```'s function is create environment for web developer with *php* and *mysql* with one click way for start your dockerized project.
 
 ```efig``` can startup containers with ```fig.yml``` config, deploy data from file into database, backup data from database into file, remove and restart containers.
 
@@ -7,10 +8,10 @@
 
 ## Requirements
 
-* *Docker* (https://www.docker.com/)
-* *fig* (http://www.fig.sh)
-* *DNSMasq* (http://www.thekelleys.org.uk/dnsmasq/doc.html)
-* *nsenter* (https://github.com/jpetazzo/nsenter)
+* Docker (https://www.docker.com/)
+* fig (http://www.fig.sh)
+* DNSMasq (http://www.thekelleys.org.uk/dnsmasq/doc.html)
+* nsenter (https://github.com/jpetazzo/nsenter)
 
 ### DNSMasq minimal configuration
 
@@ -79,10 +80,24 @@ Variable | Comment
 
 
 ```bash
-# efig.cong
+# efig.conf
 PROJECT_NAME=project
 FIG_CONF=efig.yml
+SUBDOMAINS_ENABLED=1
+DNS_ZONE=doc
+MAIN_CONTAINER_NAME=web
+DB_CONTAINER_NAME=db
 ```
+
+Config key | Comment
+-----------|---------
+`PROJECT_NAME` | Name of project. Will use in project URL
+`FIG_CONF` | Fig configuration file name
+`SUBDOMAINS_ENABLED` | Available values: `0`, `1`. If it equal to `1` then will create domains for each container in format: `http://CONTAINER_NAME.PROJECT_NAME.DNS_ZONE`. 
+`DNS_ZONE` | DNS zone for domain location. See in `SUBDOMAINS_ENABLED`
+`MAIN_CONTAINER_NAME` | Name of main (web) container. Must mutch with container name in `FIG_CONF`
+`DB_CONTAINER_NAME` | Name of database container. Must mutch with container name in `FIG_CONF`
+
 ```apacheconf
 # httpd.conf
 <VirtualHost *:80>
