@@ -64,6 +64,11 @@ function fnCheckConfig(){
         echo "DNS_ZONE in config expected"
         exit 1
     fi
+
+    if [[ -z $MAIN_CONTAINER_NAME ]]; then
+        echo "MAIN_CONTAINER_NAME is not defined in config"
+        exit 1
+    fi
 }
 
 function fnCleanUp(){
@@ -77,17 +82,16 @@ function fnRestartDnsmasq(){
 }
 
 function fnDeployDB(){
-    sleep 10
-    docker-enter $PROJECT_NAME"_db_1" /bin/bash /db/start.db.sh
+    docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
 }
 
 function fnBackupDB(){
-    docker-enter $PROJECT_NAME"_db_1" /bin/bash /db/stop.db.sh
+    docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
 }
 
 function fnUp(){
     fig -f $FIG_CONF -p $PROJECT_NAME up -d
-    IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_web_1")
+    IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
     echo "Adding main container into DNSMasq config"
     echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
     if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
@@ -97,12 +101,24 @@ function fnUp(){
             echo "address=/$CONTAINER.$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
         done
     fi
-    fnDeployDB
+
+    if [[ ! -z $DB_CONTAINER_NAME ]]; then
+        echo -ne "Waiting for database container is completely started"
+        for i in {1..10}; do
+            sleep 1;
+        echo -ne ".";
+        done
+        echo -ne "\n"
+        fnDeployDB
+    fi
+
     fnRestartDnsmasq
 }
 
 function fnStop(){
-    fnBackupDB
+    if [[ ! -z $DB_CONTAINER_NAME ]]; then
+        fnBackupDB
+    fi
     fig -f $FIG_CONF -p $PROJECT_NAME stop
     echo "Cleaning up DNSMasq.conf"
     sed "/$PROJECT_NAME\.$DNS_ZONE\//d" -i /etc/dnsmasq.conf
@@ -116,8 +132,10 @@ function fnRm(){
 }
 
 function fnGetIPs(){
-    echo "DB container IP:  "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_db_1"`
-    echo "Web container IP: "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_web_1"`
+    if [[ ! -z $DB_CONTAINER_NAME ]]; then
+        echo "DB container IP:  "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${DB_CONTAINER_NAME}_1"`
+    fi
+    echo "Web container IP: "`docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1"`
 }
 
 function fnGetHelp(){
@@ -146,10 +164,18 @@ case $ACTION in
         fnRm
         ;;
     'deploy')
-        fnDeployDB
+        if [[ ! -z $DB_CONTAINER_NAME ]]; then
+            fnDeployDB
+        else
+            echo "No DB container specified in config"
+        fi
         ;;
     'backup')
-        fnBackupDB
+        if [[ ! -z $DB_CONTAINER_NAME ]]; then
+            fnBackupDB
+        else
+            echo "No DB container specified in config"
+        fi
         ;;
     'info')
         fnGetIPs
