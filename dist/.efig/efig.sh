@@ -69,6 +69,11 @@ function fnCheckConfig(){
         echo "MAIN_CONTAINER_NAME is not defined in config"
         exit 1
     fi
+
+    if [[ -z $DNSMASQ_CONFIG_PATH ]]; then
+        echo "DNSMASQ_CONFIG_PATH is not defined in config"
+        exit 1
+    fi
 }
 
 function fnCleanUp(){
@@ -93,12 +98,12 @@ function fnUp(){
     fig -f $FIG_CONF -p $PROJECT_NAME up -d
     IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
     echo "Adding main container into DNSMasq config"
-    echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
+    echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
     if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
         for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
             IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
             echo "Adding ${CONTAINER} container into DNSMasq config"
-            echo "address=/$CONTAINER.$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
+            echo "address=/$CONTAINER.$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
         done
     fi
 
@@ -121,7 +126,7 @@ function fnStop(){
     fi
     fig -f $FIG_CONF -p $PROJECT_NAME stop
     echo "Cleaning up DNSMasq.conf"
-    sed "/$PROJECT_NAME\.$DNS_ZONE\//d" -i /etc/dnsmasq.conf
+    sed "/$PROJECT_NAME\.$DNS_ZONE\//d" -i $DNSMASQ_CONFIG_PATH
     fnRestartDnsmasq
 }
 

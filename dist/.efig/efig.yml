@@ -3,7 +3,7 @@ db:
     environment:
         - DB_USER=dbuser
         - DB_PASS=dbpass
-        - DB_NAME=dbname
+        - DB_NAME=dbname,dbtest
         - E_DB_DUMP=db.sql
         - E_DB_NAME=dbname
         - E_DB_TEST_DUMP=db.test.sql
