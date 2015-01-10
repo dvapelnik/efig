@@ -59,6 +59,11 @@ function fnCheckConfig(){
         echo "SUBDOMAINS_ENABLED value is incorrect. Use 0 or 1"
         exit 1
     fi
+
+    if [[ -z $DNS_ZONE ]]; then
+        echo "DNS_ZONE in config expected"
+        exit 1
+    fi
 }
 
 function fnCleanUp(){
@@ -84,12 +89,12 @@ function fnUp(){
     fig -f $FIG_CONF -p $PROJECT_NAME up -d
     IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_web_1")
     echo "Adding main container into DNSMasq config"
-    echo "address=/$PROJECT_NAME.doc/$IP" >> /etc/dnsmasq.conf
+    echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
     if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
         for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
             IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
             echo "Adding ${CONTAINER} container into DNSMasq config"
-            echo "address=/$CONTAINER.$PROJECT_NAME.doc/$IP" >> /etc/dnsmasq.conf
+            echo "address=/$CONTAINER.$PROJECT_NAME.$DNS_ZONE/$IP" >> /etc/dnsmasq.conf
         done
     fi
     fnDeployDB
@@ -100,7 +105,7 @@ function fnStop(){
     fnBackupDB
     fig -f $FIG_CONF -p $PROJECT_NAME stop
     echo "Cleaning up DNSMasq.conf"
-    sed "/$PROJECT_NAME\.doc\//d" -i /etc/dnsmasq.conf
+    sed "/$PROJECT_NAME\.$DNS_ZONE\//d" -i /etc/dnsmasq.conf
     fnRestartDnsmasq
 }
 
