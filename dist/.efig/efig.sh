@@ -87,11 +87,15 @@ function fnRestartDnsmasq(){
 }
 
 function fnDeployDB(){
-    docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
+    if [[ -f db/start.db.sh ]]; then
+        docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
+    fi
 }
 
 function fnBackupDB(){
-    docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
+    if [[ -f db/stop.db.sh ]]; then
+        docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
+    fi
 }
 
 function fnUp(){
