@@ -65,10 +65,10 @@ function fnCheckConfig(){
         exit 1
     fi
 
-    if [[ -z $MAIN_CONTAINER_NAME ]]; then
-        echo "MAIN_CONTAINER_NAME is not defined in config"
-        exit 1
-    fi
+    # if [[ -z $MAIN_CONTAINER_NAME ]]; then
+    #     echo "MAIN_CONTAINER_NAME is not defined in config"
+    #     exit 1
+    # fi
 
     if [[ -z $DNSMASQ_CONFIG_PATH ]]; then
         echo "DNSMASQ_CONFIG_PATH is not defined in config"
@@ -96,9 +96,11 @@ function fnBackupDB(){
 
 function fnUp(){
     fig -f $FIG_CONF -p $PROJECT_NAME up -d
-    IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
-    echo "Adding main container into DNSMasq config"
-    echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
+    if [[ ! -z "${MAIN_CONTAINER_NAME}" ]]; then
+        IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
+        echo "Adding main container into DNSMasq config"
+        echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
+    fi
     if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
         for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
             IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
@@ -159,6 +161,19 @@ function fnSelfInstall(){
     cp -f $0 /usr/sbin/efig
     chmod +x /usr/sbin/efig
     chown root:root /usr/sbin/efig
+    echo "Script copied into /usr/sbin/efig"
+}
+
+function fnRunOnStartScripts(){
+    if [[ -f scripts/on.start.sh ]]; then
+        /bin/bash scripts/on.start.sh
+    fi
+}
+
+function fnRunOnStopScripts(){
+    if [[ -f scripts/on.stop.sh ]]; then
+        /bin/bash scripts/on.stop.sh
+    fi
 }
 # functions END
 
@@ -167,6 +182,7 @@ fnCheckConfig
 case $ACTION in
     'up')
         fnUp
+        fnRunOnStartScripts
         ;;
     'restart')
         fnRm
@@ -174,6 +190,7 @@ case $ACTION in
         ;;
     'rm')
         fnRm
+        fnRunOnStopScripts
         ;;
     'deploy')
         if [[ ! -z $DB_CONTAINER_NAME ]]; then
