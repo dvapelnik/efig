@@ -99,6 +99,8 @@ Config key | Comment
 `DB_CONTAINER_NAME` | Name of database container. Must mutch with container name in `FIG_CONF`
 `DNSMASQ_CONFIG_PATH` | Path to DNSMasq config file
 
+You can add two scripts `scripts/on.start.sh` and `scripts/on.stop.sh` for some actions after start and after stop containers. For example, manage `iptables`'s rules using squid container as caching transparent proxy (look at squid example)
+
 ```apacheconf
 # httpd.conf
 <VirtualHost *:80>
