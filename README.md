@@ -50,6 +50,8 @@ File or folder | Comment
 `httpd.conf` | `apache2` config for project
 `logs/` | directory for `apache2` log-files
 `xd_profile/` `xd_trace/` | directories for XDebug profile and trace files
+`scripts/on.start.sh` | action after start containers
+`scripts/on.stop.sh` | action after stop containers
 
 ### Config samples
 ```yml
