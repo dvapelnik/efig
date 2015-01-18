@@ -152,6 +152,7 @@ function fnGetHelp(){
     echo -e "\trm\t\t- for remove containers with backup database"
     echo -e "\tdeploy\t\t- for manual deploying database from file"
     echo -e "\tbackup\t\t- for manual backuping database into file"
+    echo -e "\tstatus\t\t- show containers status"
     echo -e "\tself-install\t- add efig file into user's bin directory"
     echo -e "\thelp\t\t- show this help"
 }
@@ -173,6 +174,10 @@ function fnRunOnStopScripts(){
     if [[ -f scripts/on.stop.sh ]]; then
         /bin/bash scripts/on.stop.sh
     fi
+}
+
+function fnStatus(){
+    fig -f $FIG_CONF -p $PROJECT_NAME ps
 }
 # functions END
 
@@ -211,11 +216,14 @@ case $ACTION in
     'self-install')
         fnSelfInstall
         ;;
+    'status')
+        fnStatus
+        ;;
     'help')
         fnGetHelp
         ;;
     *)
-        echo "Try to use [up|restart|rm|info|deploy|backup|self-install|help] arguments"
+        echo "Try to use [up|restart|rm|info|deploy|backup|self-install|status|help] arguments"
         ;;
 esac;
 
