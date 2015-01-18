@@ -1,0 +1,48 @@
+postgresql:
+    image: sameersbn/postgresql:latest
+    environment:
+        - DB_USER=gitlab
+        - DB_PASS=gitlab
+        - DB_NAME=gitlab,redmine
+    volumes:
+        - data/potgresql/data:/var/lib/postgresql
+redis:
+    image: sameersbn/redis:latest
+gitlab:
+    image: sameersbn/gitlab:latest
+    links:
+        - redis:redisio
+        - postgresql:postgresql
+    environment:
+        - GITLAB_HOST=gitlab.doc
+        - GITLAB_SIGNUP=false
+        - GITLAB_PORT=80
+        - GITLAB_SSH_PORT=22
+        - GITLAB_TIMEZONE=EET
+        - GITLAB_EMAIL_ENABLED=true
+        - GITLAB_EMAIL=sender@gmail.com
+        - DB_NAME=gitlab
+        - DB_USER=gitlab
+        - DB_PASS=gitlab
+        - DB_TYPE=postgres
+        - SMTP_ENABLED=true
+        - SMTP_DOMAIN=www.gmail.com
+        - SMTP_HOST=smtp.gmail.com
+        - SMTP_PORT=587
+        - SMTP_USER=sender@gmail.com
+        - SMTP_PASS=sender.pasword
+        - SMTP_STARTTLS=true
+        - REDMINE_URL=http://redmine.gitlab.doc
+    volumes:
+        - /var/run/docker.sock:/run/docker.sock
+        - /usr/bin/docker:/bin/docker
+        - data/gitlab/data:/home/git/data
+redmine:
+    image: sameersbn/redmine:latest
+    links:
+        - postgresql:postgresql 
+    environment:
+        - DB_USER=gitlab
+        - DB_PASS=gitlab
+        - DB_NAME=redmine
+        - DB_TYPE=postgres
