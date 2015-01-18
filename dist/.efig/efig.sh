@@ -146,12 +146,19 @@ function fnGetIPs(){
 function fnGetHelp(){
     echo -e "efig is tiny wrapper for fig.sh (http://www.fig.sh/) with database deploying and backuping"
     echo -e "available commandline actions:"
-    echo -e "\tup\t- for start up containers and deploying database dump from file"
-    echo -e "\trestart\t- for restart and redeploy database"
-    echo -e "\trm\t- for remove containers with backup database"
-    echo -e "\tdeploy\t- for manual deploying database from file"
-    echo -e "\tbackup\t- for manual backuping database into file"
-    echo -e "\thelp\t- show this help"
+    echo -e "\tup\t\t- for start up containers and deploying database dump from file"
+    echo -e "\trestart\t\t- for restart and redeploy database"
+    echo -e "\trm\t\t- for remove containers with backup database"
+    echo -e "\tdeploy\t\t- for manual deploying database from file"
+    echo -e "\tbackup\t\t- for manual backuping database into file"
+    echo -e "\tself-install\t- add efig file into user's bin directory"
+    echo -e "\thelp\t\t- show this help"
+}
+
+function fnSelfInstall(){
+    cp -f $0 /usr/sbin/efig
+    chmod +x /usr/sbin/efig
+    chown root:root /usr/sbin/efig
 }
 # functions END
 
@@ -185,11 +192,14 @@ case $ACTION in
     'info')
         fnGetIPs
         ;;
+    'self-install')
+        fnSelfInstall
+        ;;
     'help')
         fnGetHelp
         ;;
     *)
-        echo "Try to use [up|restart|rm|info|deploy|backup|help] arguments"
+        echo "Try to use [up|restart|rm|info|deploy|backup|self-install|help] arguments"
         ;;
 esac;
 
