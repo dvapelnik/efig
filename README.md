@@ -34,9 +34,12 @@ Imagine you have a project in `~/web/project`. Make or copy files into `~/web/pr
 ├── efig.sh
 ├── efig.yml
 ├── httpd.conf
-├── logs/
-├── xd_profile/
-└── xd_trace/
+├── logs
+├── scripts
+│   ├── on.start.sh
+│   └── on.stop.sh
+├── xd_profile
+└── xd_trace
 ```
 File or folder | Comment
 ----------------|----------------
