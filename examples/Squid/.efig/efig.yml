@@ -1,0 +1,8 @@
+squid:
+    image: jpetazzo/squid-in-a-can
+    environment:
+        - DISK_CACHE_SIZE=5120
+        - MAX_CACHE_OBJECT=1024
+    volumes:
+        - /path/to/cache/dir:/var/cache/squid3
+    net: "host"
