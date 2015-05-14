@@ -6,9 +6,9 @@ if [[ ! $(whoami) == "root" ]]; then
 fi
 
 # check is fig installed
-fig --help &> /dev/null
+docker-compose --help &> /dev/null
 if [[ $? -eq 127 ]]; then
-    echo "Are you sure that fig.sh is installed? Browse to http://fig.sh/ for more information"
+    echo "Are you sure that docker-compose is installed? Browse to https://docs.docker.com/compose/install/ for more information"
     exit 1
 fi
 
@@ -94,7 +94,7 @@ function fnBackupDB(){
 }
 
 function fnUp(){
-    fig -f $FIG_CONF -p $PROJECT_NAME up -d
+    docker-compose -f $FIG_CONF -p $PROJECT_NAME up -d
     if [[ ! -z "${MAIN_CONTAINER_NAME}" ]]; then
         IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
         echo "Adding main container into DNSMasq config"
@@ -125,7 +125,7 @@ function fnStop(){
     if [[ ! -z $DB_CONTAINER_NAME ]]; then
         fnBackupDB
     fi
-    fig -f $FIG_CONF -p $PROJECT_NAME stop
+    docker-compose -f $FIG_CONF -p $PROJECT_NAME stop
     echo "Cleaning up DNSMasq.conf"
     sed "/$PROJECT_NAME\.$DNS_ZONE\,/d" -i $DNSMASQ_CONFIG_PATH
     fnRestartDnsmasq
@@ -133,7 +133,7 @@ function fnStop(){
 
 function fnRm(){
     fnStop
-    fig -f $FIG_CONF -p $PROJECT_NAME rm --force
+    docker-compose -f $FIG_CONF -p $PROJECT_NAME rm --force
     fnCleanUp
 }
 
@@ -177,7 +177,7 @@ function fnRunOnStopScripts(){
 }
 
 function fnStatus(){
-    fig -f $FIG_CONF -p $PROJECT_NAME ps
+    docker-compose -f $FIG_CONF -p $PROJECT_NAME ps
 }
 # functions END
 
