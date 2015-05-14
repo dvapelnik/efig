@@ -98,13 +98,13 @@ function fnUp(){
     if [[ ! -z "${MAIN_CONTAINER_NAME}" ]]; then
         IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
         echo "Adding main container into DNSMasq config"
-        echo "address=/$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
+        echo "host-record=$PROJECT_NAME.$DNS_ZONE,$IP" >> $DNSMASQ_CONFIG_PATH
     fi
     if [[ $SUBDOMAINS_ENABLED -eq 1 ]]; then
         for CONTAINER in `grep -E -o '^(\w+)' efig.yml`; do
             IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${CONTAINER}_1")
             echo "Adding ${CONTAINER} container into DNSMasq config"
-            echo "address=/$CONTAINER.$PROJECT_NAME.$DNS_ZONE/$IP" >> $DNSMASQ_CONFIG_PATH
+            echo "host-record=$CONTAINER.$PROJECT_NAME.$DNS_ZONE,$IP" >> $DNSMASQ_CONFIG_PATH
         done
     fi
 
@@ -127,7 +127,7 @@ function fnStop(){
     fi
     fig -f $FIG_CONF -p $PROJECT_NAME stop
     echo "Cleaning up DNSMasq.conf"
-    sed "/$PROJECT_NAME\.$DNS_ZONE\//d" -i $DNSMASQ_CONFIG_PATH
+    sed "/$PROJECT_NAME\.$DNS_ZONE\,/d" -i $DNSMASQ_CONFIG_PATH
     fnRestartDnsmasq
 }
 
