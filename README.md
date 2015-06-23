@@ -9,9 +9,9 @@
 ## Requirements
 
 * Docker (https://www.docker.com/)
-* fig (http://www.fig.sh)
+* ~~fig (http://www.fig.sh)~~ (use docker-compose in new Docker versions)
 * DNSMasq (http://www.thekelleys.org.uk/dnsmasq/doc.html)
-* nsenter (https://github.com/jpetazzo/nsenter)
+* nsenter (https://github.com/jpetazzo/nsenter) (will replace with `docker exec`)
 
 ### DNSMasq minimal configuration
 
