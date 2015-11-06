@@ -27,11 +27,11 @@ if [[ $? -eq 127 ]]; then
 fi
 
 # check is nsenter installed
-#docker-enter --help &> /dev/null
-#if [[ $? -eq 127 ]]; then
-#    echo "Are you sure that nsenter was installed? Browse to https://github.com/jpetazzo/nsenter fo more information"
-#    exit 1
-#fi
+docker-enter --help &> /dev/null
+if [[ $? -eq 127 ]]; then
+    echo "Are you sure that nsenter was installed? Browse to https://github.com/jpetazzo/nsenter fo more information"
+    exit 1
+fi
 
 # reading config
 source efig.conf
