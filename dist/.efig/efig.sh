@@ -106,11 +106,19 @@ function fnUp(){
             echo "Adding ${CONTAINER} container into DNSMasq config"
             echo "host-record=$CONTAINER.$PROJECT_NAME.$DNS_ZONE,$IP" >> $DNSMASQ_CONFIG_PATH
         done
+
+	if [[ ! -z "$ADDITIANAL_SUBDOMAINS" ]]; then
+            IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $PROJECT_NAME"_${MAIN_CONTAINER_NAME}_1")
+            for ASD in $ADDITIANAL_SUBDOMAINS; do
+                echo "Adding additianal subdomain ${ASD} into DNSMasq config"
+                echo "host-record=$ASD.$PROJECT_NAME.$DNS_ZONE,$IP" >> $DNSMASQ_CONFIG_PATH
+            done
+	fi
     fi
 
     if [[ ! -z $DB_CONTAINER_NAME ]]; then
         echo -ne "Waiting for database container is completely started"
-        for i in {1..10}; do
+        for i in {1..20}; do
             sleep 1;
         echo -ne ".";
         done
