@@ -9,12 +9,12 @@ db:
         - E_DB_TEST_DUMP=db.test.sql
         - E_DB_TEST_NAME=dbtest
     volumes:
-        - db/:/db/
+        - ./db/:/db/
 web:
     image: dvapelnik/docker-lap:debian.jessie.php56
     volumes:
         - ../:/var/www/
-        - httpd.conf:/etc/apache2/sites-enabled/000-default
+        - ./httpd-conf/:/etc/apache2/sites-enabled/
     links:
         - db:db
 
