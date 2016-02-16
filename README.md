@@ -17,7 +17,7 @@
 
 ```bash
 # cat /etc/dnsmasq.conf | grep -E -v '^(#.*)?$'
-listen-address=127.0.0.1
+interface=lo
 ```
 
 ---------------------
@@ -33,7 +33,8 @@ Imagine you have a project in `~/web/project`. Make or copy files into `~/web/pr
 ├── efig.conf
 ├── efig.sh
 ├── efig.yml
-├── httpd.conf
+├── httpd-conf
+│   └── httpd.conf
 ├── logs
 ├── scripts
 │   ├── on.start.sh
@@ -47,7 +48,7 @@ File or folder | Comment
 `efig.conf` | configuration file
 `efig.sh` | exacutable file
 `efig.yml` | `fig` configuration file for configurate containers
-`httpd.conf` | `apache2` config for project
+`httpd-conf/httpd.conf` | `apache2` config for project
 `logs/` | directory for `apache2` log-files
 `xd_profile/` `xd_trace/` | directories for XDebug profile and trace files
 `scripts/on.start.sh` | action after start containers
@@ -67,12 +68,12 @@ db:
         - E_DB_TEST_DUMP=db.test.sql
         - E_DB_TEST_NAME=dbtest
     volumes:
-        - db/:/db/
+        - ./db/:/db/
 web:
     image: dvapelnik/docker-lap:debian.jessie.php56
     volumes:
         - ../:/var/www/
-        - httpd.conf:/etc/apache2/sites-enabled/000-default
+        - ./httpd-conf/:/etc/apache2/sites-enabled/
     links:
         - db:db
 ```
@@ -92,6 +93,8 @@ SUBDOMAINS_ENABLED=1
 DNS_ZONE=doc
 MAIN_CONTAINER_NAME=web
 DB_CONTAINER_NAME=db
+ADDITIANAL_SUBDOMAINS=''
+DNSMASQ_CONFIG_PATH=/etc/dnsmasq.conf
 ```
 
 Config key | Comment
@@ -102,6 +105,7 @@ Config key | Comment
 `DNS_ZONE` | DNS zone for domain location. See in `SUBDOMAINS_ENABLED`
 `MAIN_CONTAINER_NAME` | Name of main (web) container. Must mutch with container name in `FIG_CONF`
 `DB_CONTAINER_NAME` | Name of database container. Must mutch with container name in `FIG_CONF`
+`ADDITIANAL_SUBDOMAINS` | Space separated string with list of additional web-sybdomains
 `DNSMASQ_CONFIG_PATH` | Path to DNSMasq config file
 
 You can add two scripts `scripts/on.start.sh` and `scripts/on.stop.sh` for some actions after start and after stop containers. For example, manage `iptables`'s rules using squid container as caching transparent proxy (look at squid example)
@@ -159,6 +163,6 @@ sudo /efig.sh rm
 * dvapelnik/docker-lap:debian.wheezy.php54
 * dvapelnik/docker-lap:ubuntu.trusty.php55
 * dvapelnik/docker-lap:debian.jessie.php56
+* dvapelnik/docker-lap:debian.jessie.php70
 
 They can be pulled from [DockerHub](https://registry.hub.docker.com/u/dvapelnik/docker-lap/) or builded with Dockerfiles from [dvapelnik/docker-lap](https://github.com/dvapelnik/docker-lap)
-
