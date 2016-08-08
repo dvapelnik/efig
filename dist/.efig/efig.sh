@@ -27,11 +27,11 @@ if [[ $? -eq 127 ]]; then
 fi
 
 # check is nsenter installed
-docker-enter --help &> /dev/null
-if [[ $? -eq 127 ]]; then
-    echo "Are you sure that nsenter was installed? Browse to https://github.com/jpetazzo/nsenter fo more information"
-    exit 1
-fi
+# docker-enter --help &> /dev/null
+# if [[ $? -eq 127 ]]; then
+#     echo "Are you sure that nsenter was installed? Browse to https://github.com/jpetazzo/nsenter fo more information"
+#     exit 1
+# fi
 
 # reading config
 source efig.conf
@@ -83,13 +83,15 @@ function fnRestartDnsmasq(){
 
 function fnDeployDB(){
     if [[ -f db/start.db.sh ]]; then
-        docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
+        docker exec $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
+        #docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/start.db.sh
     fi
 }
 
 function fnBackupDB(){
     if [[ -f db/stop.db.sh ]]; then
-        docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
+        docker exec $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
+        #docker-enter $PROJECT_NAME"_${DB_CONTAINER_NAME}_1" /bin/bash /db/stop.db.sh
     fi
 }
 
