@@ -11,7 +11,7 @@
 * Docker (https://www.docker.com/)
 * ~~fig (http://www.fig.sh)~~ (use docker-compose in new Docker versions)
 * DNSMasq (http://www.thekelleys.org.uk/dnsmasq/doc.html)
-* ~~nsenter~~ (https://github.com/jpetazzo/nsenter) (use `docker-exec` instead of `docker-enter` aka `nsenter`)
+* ~~nsenter (https://github.com/jpetazzo/nsenter)~~ (use `docker-exec` instead of `docker-enter` aka `nsenter`)
 
 ### DNSMasq minimal configuration
 
